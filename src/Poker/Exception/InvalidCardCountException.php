@@ -16,7 +16,7 @@ class InvalidCardCountException extends AbstractPokerException
     public static function forStreet(Street $street, int $expected, int $actual): self
     {
         return new self(
-            "Invalid card count for street {$street->value}: expected {$expected} cards, got {$actual}"
+            "Invalid card count for street {$street->value}: expected {$expected} cards, got {$actual}",
         );
     }
 }

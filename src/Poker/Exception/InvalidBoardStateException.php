@@ -12,7 +12,7 @@ class InvalidBoardStateException extends AbstractPokerException
     {
         return new self(
             "Invalid deck state for street {$street->value}: expected {$expectedTotal} total cards " .
-            "(deck + community + burns), got {$actualTotal}"
+            "(deck + community + burns), got {$actualTotal}",
         );
     }
 }

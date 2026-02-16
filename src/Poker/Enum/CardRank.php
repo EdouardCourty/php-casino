@@ -128,10 +128,16 @@ enum CardRank: string
      */
     public function isNumeric(): bool
     {
-        return match ($this) {
-            self::TWO, self::THREE, self::FOUR, self::FIVE, self::SIX,
-            self::SEVEN, self::EIGHT, self::NINE, self::TEN => true,
-            default => false,
-        };
+        return \in_array($this, [
+            self::TWO,
+            self::THREE,
+            self::FOUR,
+            self::FIVE,
+            self::SIX,
+            self::SEVEN,
+            self::EIGHT,
+            self::NINE,
+            self::TEN,
+        ], true);
     }
 }

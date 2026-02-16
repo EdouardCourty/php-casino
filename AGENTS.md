@@ -66,16 +66,26 @@ Each game module typically contains:
 - Board class manages community cards with automatic burn/draw from Deck
 - Organized into Enum/, Model/, Service/, and Exception/ subdirectories
 
+**Roulette Module** (`src/Roulette/`)
+- RouletteNumber enum with 38 cases (ZERO, DOUBLE_ZERO, ONE...THIRTY_SIX)
+- RouletteType enum (EUROPEAN, AMERICAN)
+- Board class for immutable roulette wheel with spin() functionality
+- Comprehensive betting system with BetType enum and Bet model
+- Support for all inside bets (straight up, split, street, corner, five-number, line)
+- Support for all outside bets (red, black, even, odd, low, high, dozen, column)
+- BetValidator service for strict validation of bet number combinations
+- Automatic payout calculations and win/loss determination
+- OddsCalculator service for calculating win probabilities, expected value, and house edge
+- OddsResult model for detailed odds statistics (win/loss probability, EV, house edge, payouts)
+- Properly handles European (2.7% house edge) vs American (5.26% house edge, 7.89% for five-number)
+- Custom exceptions: InvalidBetException, SpinException
+- Organized into Enum/, Model/, Service/, and Exception/ subdirectories
+
 ### Planned Modules
 
 **Common Module** (`src/Common/`) - To be developed
 - Shared Card and Deck classes
 - Common utilities and interfaces used across all games
-
-**Roulette Module** (`src/Roulette/`) - To be developed
-- Roulette wheel mechanics
-- Betting system and payout calculations
-- Game state management
 
 **Blackjack Module** (`src/Blackjack/`) - To be developed
 - Card dealing and hand evaluation

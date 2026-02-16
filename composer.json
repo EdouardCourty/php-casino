@@ -23,5 +23,11 @@
             "name": "Edouard Courty",
             "email": "edouard.courty2@gmail.com"
         }
-    ]
+    ],
+    "scripts": {
+        "test": "phpunit",
+        "phpstan": "phpstan analyse src/ tests/ --level=max",
+        "cs-check": "php-cs-fixer fix --dry-run --diff",
+        "cs-fix": "php-cs-fixer fix"
+    }
 }

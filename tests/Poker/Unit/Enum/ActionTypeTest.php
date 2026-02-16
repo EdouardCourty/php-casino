@@ -153,11 +153,11 @@ class ActionTypeTest extends TestCase
     public function testAllActionTypesHaveUniqueValues(): void
     {
         $values = array_map(
-            static fn(ActionType $type): string => $type->value,
-            ActionType::cases()
+            static fn (ActionType $type): string => $type->value,
+            ActionType::cases(),
         );
 
-        $this->assertCount(count(ActionType::cases()), array_unique($values), 'All action type values should be unique');
+        $this->assertCount(\count(ActionType::cases()), array_unique($values), 'All action type values should be unique');
     }
 
     public function testActionTypesMutualExclusivity(): void

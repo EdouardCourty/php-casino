@@ -125,11 +125,11 @@ class StreetTest extends TestCase
     public function testAllStreetsHaveUniqueValues(): void
     {
         $values = array_map(
-            static fn(Street $street): string => $street->value,
-            Street::cases()
+            static fn (Street $street): string => $street->value,
+            Street::cases(),
         );
 
-        $this->assertCount(count(Street::cases()), array_unique($values), 'All street values should be unique');
+        $this->assertCount(\count(Street::cases()), array_unique($values), 'All street values should be unique');
     }
 
     public function testStreetProgression(): void

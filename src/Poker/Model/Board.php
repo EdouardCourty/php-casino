@@ -38,8 +38,8 @@ final class Board
 
         // Validate card count matches street
         $expectedCount = $this->currentStreet->getCommunityCardsCount();
-        if (count($this->communityCards) !== $expectedCount) {
-            throw InvalidCardCountException::forStreet($this->currentStreet, $expectedCount, count($this->communityCards));
+        if (\count($this->communityCards) !== $expectedCount) {
+            throw InvalidCardCountException::forStreet($this->currentStreet, $expectedCount, \count($this->communityCards));
         }
 
         // Check for duplicates in community cards
@@ -116,7 +116,7 @@ final class Board
      */
     public static function fromString(Street $street, string $cardsString, Deck $deck): self
     {
-        $cardsString = trim($cardsString);
+        $cardsString = mb_trim($cardsString);
         if ($cardsString === '') {
             return new self($street, [], $deck);
         }
@@ -126,7 +126,7 @@ final class Board
         if ($cardStrings === false) {
             return new self($street, [], $deck);
         }
-        $cards = array_map(fn(string $str) => Card::fromString($str), $cardStrings);
+        $cards = array_map(fn (string $str) => Card::fromString($str), $cardStrings);
 
         return new self($street, $cards, $deck);
     }
@@ -154,7 +154,7 @@ final class Board
      */
     public function getCardCount(): int
     {
-        return count($this->communityCards);
+        return \count($this->communityCards);
     }
 
     /**
@@ -231,7 +231,7 @@ final class Board
      */
     public function isSuited(): bool
     {
-        if (count($this->communityCards) < 2) {
+        if (\count($this->communityCards) < 2) {
             return false;
         }
 
@@ -259,12 +259,12 @@ final class Board
      */
     public function isRainbow(): bool
     {
-        if (count($this->communityCards) !== 3) {
+        if (\count($this->communityCards) !== 3) {
             return false;
         }
 
-        $suits = array_map(fn(Card $card) => $card->suit->value, $this->communityCards);
-        return count(array_unique($suits)) === 3;
+        $suits = array_map(fn (Card $card) => $card->suit->value, $this->communityCards);
+        return \count(array_unique($suits)) === 3;
     }
 
     /**
@@ -304,15 +304,15 @@ final class Board
      */
     public function hasStraightDraw(): bool
     {
-        if (count($this->communityCards) < 3) {
+        if (\count($this->communityCards) < 3) {
             return false;
         }
 
-        $values = array_map(fn(Card $card) => $card->getValue(), $this->communityCards);
+        $values = array_map(fn (Card $card) => $card->getValue(), $this->communityCards);
         sort($values);
 
         // Check if the spread between min and max is <= 4 (allows for a straight)
-        $spread = $values[count($values) - 1] - $values[0];
+        $spread = $values[\count($values) - 1] - $values[0];
 
         return $spread <= 4;
     }
@@ -390,12 +390,12 @@ final class Board
         }
 
         $deckCards = $this->deck->getRemainingCards();
-        $communityCardStrings = array_map(fn(Card $card) => $card->toString(), $this->communityCards);
+        $communityCardStrings = array_map(fn (Card $card) => $card->toString(), $this->communityCards);
         $duplicates = [];
 
         foreach ($deckCards as $deckCard) {
             $deckCardString = $deckCard->toString();
-            if (in_array($deckCardString, $communityCardStrings, true)) {
+            if (\in_array($deckCardString, $communityCardStrings, true)) {
                 $duplicates[] = $deckCardString;
             }
         }
@@ -418,16 +418,16 @@ final class Board
         }
 
         $deckCount = $this->deck->count();
-        $communityCount = count($this->communityCards);
+        $communityCount = \count($this->communityCards);
         $expectedBurns = $this->currentStreet->getTotalBurnsBeforeStreet();
-        
+
         $actualTotal = $deckCount + $communityCount + $expectedBurns;
-        
+
         if ($actualTotal !== Deck::MAX_COUNT) {
             throw InvalidBoardStateException::invalidDeckBurnCount(
                 $this->currentStreet,
                 Deck::MAX_COUNT,
-                $actualTotal
+                $actualTotal,
             );
         }
     }
