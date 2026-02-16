@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Ecourty\PHPCasino\Poker\Service;
 
+use Ecourty\PHPCasino\Common\Model\Card;
 use Ecourty\PHPCasino\Poker\Enum\EquityCalculationMethod;
 use Ecourty\PHPCasino\Poker\Exception\InvalidEquityInputException;
-use Ecourty\PHPCasino\Poker\Model\Card;
 use Ecourty\PHPCasino\Poker\Model\EquityResult;
 use Ecourty\PHPCasino\Poker\Model\PlayerRange;
 use Ecourty\PHPCasino\Poker\Service\EquityCalculator\EnumerationCalculator;

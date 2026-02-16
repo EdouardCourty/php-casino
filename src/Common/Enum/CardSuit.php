@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ecourty\PHPCasino\Poker\Enum;
+namespace Ecourty\PHPCasino\Common\Enum;
 
 /**
  * Card suits in poker (hearts, diamonds, clubs, spades).

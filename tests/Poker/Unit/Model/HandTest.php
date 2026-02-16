@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Ecourty\PHPCasino\Tests\Poker\Unit;
 
-use Ecourty\PHPCasino\Poker\Enum\CardRank;
+use Ecourty\PHPCasino\Common\Enum\CardRank;
+use Ecourty\PHPCasino\Common\Model\Card;
 use Ecourty\PHPCasino\Poker\Enum\HandRank;
-use Ecourty\PHPCasino\Poker\Model\Card;
 use Ecourty\PHPCasino\Poker\Model\Hand;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;

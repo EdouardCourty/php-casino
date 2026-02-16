@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Ecourty\PHPCasino\Poker\Model;
 
+use Ecourty\PHPCasino\Common\Model\Card;
+use Ecourty\PHPCasino\Common\Model\Deck;
 use Ecourty\PHPCasino\Poker\Enum\Street;
 use Ecourty\PHPCasino\Poker\Exception\DuplicateCardException;
 use Ecourty\PHPCasino\Poker\Exception\InvalidBoardStateException;
@@ -21,37 +23,40 @@ final class Board
      */
     private array $communityCards;
 
+    private Deck $deck;
+
     /**
-     * @param Street $currentStreet Current street (preflop, flop, turn, river, showdown)
+     * @throws InvalidCardCountException If card count doesn't match street requirement
+     * @throws DuplicateCardException If duplicate cards found in community cards or deck contains community cards
+     * @throws InvalidBoardStateException If deck burn count is incorrect for the current street
+     *@param Street $street Current street (preflop, flop, turn, river, showdown)
      * @param array<Card> $communityCards Community cards on the board
      * @param Deck|null $deck Optional deck for automatic dealing (creates new shuffled deck if null at preflop)
      *
-     * @throws InvalidCardCountException If card count doesn't match street requirement
-     * @throws DuplicateCardException If duplicate cards found in community cards or deck contains community cards
      */
     public function __construct(
-        private Street $currentStreet,
+        private Street $street,
         array $communityCards = [],
-        private ?Deck $deck = null,
+        ?Deck $deck = null,
     ) {
         $this->communityCards = array_values($communityCards);
 
         // Validate card count matches street
-        $expectedCount = $this->currentStreet->getCommunityCardsCount();
+        $expectedCount = $this->street->getCommunityCardsCount();
         if (\count($this->communityCards) !== $expectedCount) {
-            throw InvalidCardCountException::forStreet($this->currentStreet, $expectedCount, \count($this->communityCards));
+            throw InvalidCardCountException::forStreet($this->street, $expectedCount, \count($this->communityCards));
         }
 
         // Check for duplicates in community cards
         $this->validateNoDuplicates($this->communityCards);
 
         // Create new shuffled deck if none provided and at preflop
-        if ($this->deck === null && $this->currentStreet === Street::PREFLOP) {
+        if ($deck === null && $this->street === Street::PREFLOP) {
             $this->deck = Deck::shuffled();
         }
 
         // If community cards provided, validate deck state
-        if (!empty($this->communityCards) && $this->deck !== null) {
+        if (!empty($this->communityCards) && $deck !== null) {
             $this->validateDeckDoesNotContainCommunityCards();
             $this->validateDeckBurnCount();
         }
@@ -60,6 +65,9 @@ final class Board
     /**
      * Creates a new board at preflop with no community cards.
      * If no deck provided, creates and shuffles a new one.
+     *
+     * @throws InvalidCardCountException If community cards provided (should be empty at preflop)
+     * @throws DuplicateCardException If duplicate cards found in provided deck (should be full deck
      */
     public static function createAtPreflop(?Deck $deck = null): self
     {
@@ -73,6 +81,7 @@ final class Board
      * @param array<Card> $cards Exactly 3 cards
      *
      * @throws InvalidCardCountException If not exactly 3 cards provided
+     * @throws DuplicateCardException If duplicate cards found in community cards or deck contains community cards
      */
     public static function createAtFlop(array $cards, Deck $deck): self
     {
@@ -86,6 +95,7 @@ final class Board
      * @param array<Card> $cards Exactly 4 cards
      *
      * @throws InvalidCardCountException If not exactly 4 cards provided
+     * @throws DuplicateCardException If duplicate cards found in community cards or deck contains community cards
      */
     public static function createAtTurn(array $cards, Deck $deck): self
     {
@@ -98,7 +108,8 @@ final class Board
      *
      * @param array<Card> $cards Exactly 5 cards
      *
-     * @throws InvalidCardCountException If not exactly 5 cards provided
+     * @throws InvalidCardCountException If not exactly 5 cards provided*
+     * @throws DuplicateCardException If duplicate cards found in community cards or deck contains community cards
      */
     public static function createAtRiver(array $cards, Deck $deck): self
     {
@@ -106,37 +117,11 @@ final class Board
     }
 
     /**
-     * Creates a board from string notation.
-     *
-     * @param Street $street The street to create the board at
-     * @param string $cardsString Space or comma-separated card notation (e.g., "AhKdQs" or "Ah Kd Qs")
-     * @param Deck $deck Deck to use (required if cards provided)
-     *
-     * @throws InvalidCardCountException If card count doesn't match street
-     */
-    public static function fromString(Street $street, string $cardsString, Deck $deck): self
-    {
-        $cardsString = mb_trim($cardsString);
-        if ($cardsString === '') {
-            return new self($street, [], $deck);
-        }
-
-        // Split by space or comma
-        $cardStrings = preg_split('/[\s,]+/', $cardsString);
-        if ($cardStrings === false) {
-            return new self($street, [], $deck);
-        }
-        $cards = array_map(fn (string $str) => Card::fromString($str), $cardStrings);
-
-        return new self($street, $cards, $deck);
-    }
-
-    /**
      * Returns the current street.
      */
-    public function getCurrentStreet(): Street
+    public function getStreet(): Street
     {
-        return $this->currentStreet;
+        return $this->street;
     }
 
     /**
@@ -162,7 +147,7 @@ final class Board
      */
     public function getRemainingDeckCount(): int
     {
-        return $this->deck?->count() ?? 0;
+        return $this->deck->count();
     }
 
     /**
@@ -172,16 +157,13 @@ final class Board
      *
      * @throws NotEnoughCardsException If deck doesn't have enough cards
      * @throws \RuntimeException If already at showdown or no deck available
+     * @throws InvalidCardCountException If drawn cards don't match next street requirements
      */
     public function advanceToNextStreet(): self
     {
-        $nextStreet = $this->currentStreet->getNextStreet();
+        $nextStreet = $this->street->getNextStreet();
         if ($nextStreet === null) {
             throw new \RuntimeException('Cannot advance past showdown');
-        }
-
-        if ($this->deck === null) {
-            throw new \RuntimeException('Cannot advance street without a deck');
         }
 
         // Determine cards to burn and draw based on next street
@@ -206,7 +188,7 @@ final class Board
         }
 
         // Update street
-        $this->currentStreet = $nextStreet;
+        $this->street = $nextStreet;
 
         return $this;
     }
@@ -218,7 +200,7 @@ final class Board
      */
     public function reset(?Deck $deck = null): self
     {
-        $this->currentStreet = Street::PREFLOP;
+        $this->street = Street::PREFLOP;
         $this->communityCards = [];
         $this->deck = $deck ?? Deck::shuffled();
 
@@ -236,6 +218,7 @@ final class Board
         }
 
         $firstSuit = $this->communityCards[0]->suit;
+
         foreach ($this->communityCards as $card) {
             if ($card->suit !== $firstSuit) {
                 return false;
@@ -288,6 +271,7 @@ final class Board
     public function hasFlushDraw(): bool
     {
         $suitCounts = $this->getSuitDistribution();
+
         foreach ($suitCounts as $count) {
             if ($count >= 3) {
                 return true;
@@ -325,6 +309,7 @@ final class Board
     public function getSuitDistribution(): array
     {
         $distribution = [];
+
         foreach ($this->communityCards as $card) {
             $suitValue = $card->suit->value;
             $distribution[$suitValue] = ($distribution[$suitValue] ?? 0) + 1;
@@ -341,6 +326,7 @@ final class Board
     public function getRankDistribution(): array
     {
         $distribution = [];
+
         foreach ($this->communityCards as $card) {
             $rankValue = $card->rank->value;
             $distribution[$rankValue] = ($distribution[$rankValue] ?? 0) + 1;
@@ -385,10 +371,6 @@ final class Board
      */
     private function validateDeckDoesNotContainCommunityCards(): void
     {
-        if ($this->deck === null) {
-            return;
-        }
-
         $deckCards = $this->deck->getRemainingCards();
         $communityCardStrings = array_map(fn (Card $card) => $card->toString(), $this->communityCards);
         $duplicates = [];
@@ -413,19 +395,15 @@ final class Board
      */
     private function validateDeckBurnCount(): void
     {
-        if ($this->deck === null) {
-            return;
-        }
-
         $deckCount = $this->deck->count();
         $communityCount = \count($this->communityCards);
-        $expectedBurns = $this->currentStreet->getTotalBurnsBeforeStreet();
+        $expectedBurns = $this->street->getTotalBurnsBeforeStreet();
 
         $actualTotal = $deckCount + $communityCount + $expectedBurns;
 
         if ($actualTotal !== Deck::MAX_COUNT) {
             throw InvalidBoardStateException::invalidDeckBurnCount(
-                $this->currentStreet,
+                $this->street,
                 Deck::MAX_COUNT,
                 $actualTotal,
             );

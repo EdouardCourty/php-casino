@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Ecourty\PHPCasino\Tests\Poker\Unit;
 
+use Ecourty\PHPCasino\Common\Model\Card;
+use Ecourty\PHPCasino\Common\Model\Deck;
 use Ecourty\PHPCasino\Poker\Exception\CardNotFoundException;
 use Ecourty\PHPCasino\Poker\Exception\DuplicateCardException;
 use Ecourty\PHPCasino\Poker\Exception\InvalidCardCountException;
 use Ecourty\PHPCasino\Poker\Exception\NotEnoughCardsException;
-use Ecourty\PHPCasino\Poker\Model\Card;
-use Ecourty\PHPCasino\Poker\Model\Deck;
 use PHPUnit\Framework\TestCase;
 
 class DeckTest extends TestCase

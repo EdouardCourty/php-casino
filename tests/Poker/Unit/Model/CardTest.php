@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Ecourty\PHPCasino\Tests\Poker\Unit;
 
-use Ecourty\PHPCasino\Poker\Enum\CardRank;
-use Ecourty\PHPCasino\Poker\Enum\CardSuit;
+use Ecourty\PHPCasino\Common\Enum\CardRank;
+use Ecourty\PHPCasino\Common\Enum\CardSuit;
+use Ecourty\PHPCasino\Common\Model\Card;
 use Ecourty\PHPCasino\Poker\Exception\InvalidCardNotationException;
 use Ecourty\PHPCasino\Poker\Exception\InvalidRankException;
 use Ecourty\PHPCasino\Poker\Exception\InvalidSuitException;
-use Ecourty\PHPCasino\Poker\Model\Card;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

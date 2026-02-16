@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Ecourty\PHPCasino\Poker\Exception;
 
-use Ecourty\PHPCasino\Poker\Model\Card;
+use Ecourty\PHPCasino\Common\Model\Card;
 
 class CardNotFoundException extends AbstractPokerException
 {

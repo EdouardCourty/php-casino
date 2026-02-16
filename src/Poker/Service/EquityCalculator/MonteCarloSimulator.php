@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Ecourty\PHPCasino\Poker\Service\EquityCalculator;
 
-use Ecourty\PHPCasino\Poker\Model\Card;
-use Ecourty\PHPCasino\Poker\Model\Deck;
+use Ecourty\PHPCasino\Common\Model\Card;
+use Ecourty\PHPCasino\Common\Model\Deck;
 use Ecourty\PHPCasino\Poker\Model\Hand;
 use Ecourty\PHPCasino\Poker\Model\PlayerRange;
 use Ecourty\PHPCasino\Poker\Service\HandEvaluator;

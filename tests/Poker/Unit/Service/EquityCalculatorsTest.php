@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Ecourty\PHPCasino\Tests\Poker\Unit;
 
-use Ecourty\PHPCasino\Poker\Model\Card;
+use Ecourty\PHPCasino\Common\Model\Card;
 use Ecourty\PHPCasino\Poker\Model\PlayerRange;
 use Ecourty\PHPCasino\Poker\Service\EquityCalculator\EnumerationCalculator;
 use Ecourty\PHPCasino\Poker\Service\EquityCalculator\MonteCarloSimulator;

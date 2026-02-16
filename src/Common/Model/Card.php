@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Ecourty\PHPCasino\Poker\Model;
+namespace Ecourty\PHPCasino\Common\Model;
 
-use Ecourty\PHPCasino\Poker\Enum\CardRank;
-use Ecourty\PHPCasino\Poker\Enum\CardSuit;
+use Ecourty\PHPCasino\Common\Enum\CardRank;
+use Ecourty\PHPCasino\Common\Enum\CardSuit;
 use Ecourty\PHPCasino\Poker\Exception\InvalidCardNotationException;
 use Ecourty\PHPCasino\Poker\Exception\InvalidRankException;
 use Ecourty\PHPCasino\Poker\Exception\InvalidSuitException;

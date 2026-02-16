@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Ecourty\PHPCasino\Tests\Poker\Unit\Model;
 
-use Ecourty\PHPCasino\Poker\Enum\CardRank;
-use Ecourty\PHPCasino\Poker\Enum\CardSuit;
+use Ecourty\PHPCasino\Common\Enum\CardRank;
+use Ecourty\PHPCasino\Common\Enum\CardSuit;
+use Ecourty\PHPCasino\Common\Model\Card;
+use Ecourty\PHPCasino\Common\Model\Deck;
 use Ecourty\PHPCasino\Poker\Enum\Street;
 use Ecourty\PHPCasino\Poker\Exception\DuplicateCardException;
 use Ecourty\PHPCasino\Poker\Exception\InvalidBoardStateException;
 use Ecourty\PHPCasino\Poker\Exception\InvalidCardCountException;
 use Ecourty\PHPCasino\Poker\Exception\NotEnoughCardsException;
 use Ecourty\PHPCasino\Poker\Model\Board;
-use Ecourty\PHPCasino\Poker\Model\Card;
-use Ecourty\PHPCasino\Poker\Model\Deck;
 use PHPUnit\Framework\TestCase;
 
 class BoardTest extends TestCase
@@ -36,7 +36,7 @@ class BoardTest extends TestCase
     {
         $board = new Board(Street::PREFLOP);
 
-        $this->assertSame(Street::PREFLOP, $board->getCurrentStreet());
+        $this->assertSame(Street::PREFLOP, $board->getStreet());
         $this->assertCount(0, $board->getCommunityCards());
         $this->assertSame(52, $board->getRemainingDeckCount());
     }
@@ -46,7 +46,7 @@ class BoardTest extends TestCase
         $deck = new Deck();
         $board = new Board(Street::PREFLOP, [], $deck);
 
-        $this->assertSame(Street::PREFLOP, $board->getCurrentStreet());
+        $this->assertSame(Street::PREFLOP, $board->getStreet());
         $this->assertCount(0, $board->getCommunityCards());
         $this->assertSame(52, $board->getRemainingDeckCount());
     }
@@ -62,7 +62,7 @@ class BoardTest extends TestCase
 
         $board = new Board(Street::FLOP, $cards, $deck);
 
-        $this->assertSame(Street::FLOP, $board->getCurrentStreet());
+        $this->assertSame(Street::FLOP, $board->getStreet());
         $this->assertCount(3, $board->getCommunityCards());
         $this->assertSame(48, $board->getRemainingDeckCount());
     }
@@ -212,7 +212,7 @@ class BoardTest extends TestCase
     {
         $board = Board::createAtPreflop();
 
-        $this->assertSame(Street::PREFLOP, $board->getCurrentStreet());
+        $this->assertSame(Street::PREFLOP, $board->getStreet());
         $this->assertCount(0, $board->getCommunityCards());
         $this->assertSame(52, $board->getRemainingDeckCount());
     }
@@ -222,7 +222,7 @@ class BoardTest extends TestCase
         $deck = new Deck();
         $board = Board::createAtPreflop($deck);
 
-        $this->assertSame(Street::PREFLOP, $board->getCurrentStreet());
+        $this->assertSame(Street::PREFLOP, $board->getStreet());
         $this->assertSame(52, $board->getRemainingDeckCount());
     }
 
@@ -237,7 +237,7 @@ class BoardTest extends TestCase
 
         $board = Board::createAtFlop($cards, $deck);
 
-        $this->assertSame(Street::FLOP, $board->getCurrentStreet());
+        $this->assertSame(Street::FLOP, $board->getStreet());
         $this->assertCount(3, $board->getCommunityCards());
     }
 
@@ -253,7 +253,7 @@ class BoardTest extends TestCase
 
         $board = Board::createAtTurn($cards, $deck);
 
-        $this->assertSame(Street::TURN, $board->getCurrentStreet());
+        $this->assertSame(Street::TURN, $board->getStreet());
         $this->assertCount(4, $board->getCommunityCards());
     }
 
@@ -270,37 +270,8 @@ class BoardTest extends TestCase
 
         $board = Board::createAtRiver($cards, $deck);
 
-        $this->assertSame(Street::RIVER, $board->getCurrentStreet());
+        $this->assertSame(Street::RIVER, $board->getStreet());
         $this->assertCount(5, $board->getCommunityCards());
-    }
-
-    public function testFromString(): void
-    {
-        $cards = [
-            Card::fromString('Ah'),
-            Card::fromString('Kd'),
-            Card::fromString('Qs'),
-        ];
-        $deck = $this->prepareDeckForStreet(Street::FLOP, $cards);
-
-        $board = Board::fromString(Street::FLOP, 'Ah Kd Qs', $deck);
-
-        $this->assertSame(Street::FLOP, $board->getCurrentStreet());
-        $this->assertCount(3, $board->getCommunityCards());
-    }
-
-    public function testFromStringWithCommas(): void
-    {
-        $cards = [
-            Card::fromString('Ah'),
-            Card::fromString('Kd'),
-            Card::fromString('Qs'),
-        ];
-        $deck = $this->prepareDeckForStreet(Street::FLOP, $cards);
-
-        $board = Board::fromString(Street::FLOP, 'Ah,Kd,Qs', $deck);
-
-        $this->assertCount(3, $board->getCommunityCards());
     }
 
     public function testAdvanceToNextStreetFromPreflop(): void
@@ -310,7 +281,7 @@ class BoardTest extends TestCase
 
         $board->advanceToNextStreet();
 
-        $this->assertSame(Street::FLOP, $board->getCurrentStreet());
+        $this->assertSame(Street::FLOP, $board->getStreet());
         $this->assertCount(3, $board->getCommunityCards());
         // Should burn 1 and draw 3 = 4 cards removed
         $this->assertSame($initialDeckCount - 4, $board->getRemainingDeckCount());
@@ -324,7 +295,7 @@ class BoardTest extends TestCase
 
         $board->advanceToNextStreet(); // To turn
 
-        $this->assertSame(Street::TURN, $board->getCurrentStreet());
+        $this->assertSame(Street::TURN, $board->getStreet());
         $this->assertCount(4, $board->getCommunityCards());
         // Should burn 1 and draw 1 = 2 cards removed
         $this->assertSame($deckCountAtFlop - 2, $board->getRemainingDeckCount());
@@ -339,7 +310,7 @@ class BoardTest extends TestCase
 
         $board->advanceToNextStreet(); // To river
 
-        $this->assertSame(Street::RIVER, $board->getCurrentStreet());
+        $this->assertSame(Street::RIVER, $board->getStreet());
         $this->assertCount(5, $board->getCommunityCards());
         // Should burn 1 and draw 1 = 2 cards removed
         $this->assertSame($deckCountAtTurn - 2, $board->getRemainingDeckCount());
@@ -355,7 +326,7 @@ class BoardTest extends TestCase
 
         $board->advanceToNextStreet(); // To showdown
 
-        $this->assertSame(Street::SHOWDOWN, $board->getCurrentStreet());
+        $this->assertSame(Street::SHOWDOWN, $board->getStreet());
         $this->assertCount(5, $board->getCommunityCards());
         // Showdown doesn't burn or draw
         $this->assertSame($deckCountAtRiver, $board->getRemainingDeckCount());
@@ -394,7 +365,7 @@ class BoardTest extends TestCase
 
         $board->reset();
 
-        $this->assertSame(Street::PREFLOP, $board->getCurrentStreet());
+        $this->assertSame(Street::PREFLOP, $board->getStreet());
         $this->assertCount(0, $board->getCommunityCards());
         $this->assertSame(52, $board->getRemainingDeckCount());
     }
@@ -407,7 +378,7 @@ class BoardTest extends TestCase
         $newDeck = new Deck();
         $board->reset($newDeck);
 
-        $this->assertSame(Street::PREFLOP, $board->getCurrentStreet());
+        $this->assertSame(Street::PREFLOP, $board->getStreet());
         $this->assertCount(0, $board->getCommunityCards());
         $this->assertSame(52, $board->getRemainingDeckCount());
     }

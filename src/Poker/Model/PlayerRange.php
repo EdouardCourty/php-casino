@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Ecourty\PHPCasino\Poker\Model;
 
+use Ecourty\PHPCasino\Common\Model\Card;
 use Ecourty\PHPCasino\Poker\Exception\InvalidCardNotationException;
 use Ecourty\PHPCasino\Poker\Exception\InvalidRankException;
 use Ecourty\PHPCasino\Poker\Exception\InvalidSuitException;

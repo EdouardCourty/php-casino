@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Ecourty\PHPCasino\Poker\Model;
 
-use Ecourty\PHPCasino\Poker\Enum\CardRank;
+use Ecourty\PHPCasino\Common\Enum\CardRank;
+use Ecourty\PHPCasino\Common\Model\Card;
 use Ecourty\PHPCasino\Poker\Enum\HandRank;
 
 /**

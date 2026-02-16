@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Ecourty\PHPCasino\Tests\Poker\Unit;
 
+use Ecourty\PHPCasino\Common\Model\Card;
 use Ecourty\PHPCasino\Poker\Enum\HandRank;
 use Ecourty\PHPCasino\Poker\Exception\NoValidHandFoundException;
-use Ecourty\PHPCasino\Poker\Model\Card;
 use Ecourty\PHPCasino\Poker\Model\Hand;
 use Ecourty\PHPCasino\Poker\Service\HandEvaluator;
 use PHPUnit\Framework\Attributes\CoversClass;

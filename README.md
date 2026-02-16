@@ -98,9 +98,7 @@ composer require ecourty/php-casino
 #### Basic Card Operations
 
 ```php
-use Ecourty\PHPCasino\Poker\Model\Card;
-use Ecourty\PHPCasino\Poker\Enum\CardRank;
-use Ecourty\PHPCasino\Poker\Enum\CardSuit;
+use Ecourty\PHPCasino\Common\Enum\CardRank;use Ecourty\PHPCasino\Common\Enum\CardSuit;use Ecourty\PHPCasino\Common\Model\Card;
 
 // Create cards using enums
 $aceOfSpades = new Card(CardRank::ACE, CardSuit::SPADES);
@@ -118,7 +116,7 @@ echo $aceOfSpades->getName();  // "Ace"
 #### Deck Management
 
 ```php
-use Ecourty\PHPCasino\Poker\Model\Deck;
+use Ecourty\PHPCasino\Common\Model\Deck;
 
 // Create and shuffle a deck (two ways)
 $deck = Deck::shuffled(); // Recommended: static helper
@@ -159,7 +157,7 @@ $board->advanceToNextStreet(); // TURN → RIVER (burn 1, draw 1)
 $board->advanceToNextStreet(); // RIVER → SHOWDOWN (no burn/draw)
 
 // Get board information
-$street = $board->getCurrentStreet(); // Street::RIVER
+$street = $board->getStreet(); // Street::RIVER
 $cards = $board->getCommunityCards(); // Array of 5 Card objects
 $count = $board->getCardCount(); // 5
 $deckRemaining = $board->getRemainingDeckCount(); // 44 cards
@@ -173,9 +171,6 @@ $flopCards = [
 ];
 $deck->removeCards($flopCards); // Deck must not contain community cards
 $board = Board::createAtFlop($flopCards, $deck);
-
-// Create from string notation
-$board = Board::fromString(Street::FLOP, 'Ah Kd Qs', $deck);
 
 // Analyze board texture
 if ($board->isSuited()) {
@@ -209,8 +204,7 @@ $board->reset(); // Back to preflop, new shuffled deck
 #### Hand Evaluation
 
 ```php
-use Ecourty\PHPCasino\Poker\Service\HandEvaluator;
-use Ecourty\PHPCasino\Poker\Model\Card;
+use Ecourty\PHPCasino\Common\Model\Card;use Ecourty\PHPCasino\Poker\Service\HandEvaluator;
 
 $evaluator = new HandEvaluator();
 
