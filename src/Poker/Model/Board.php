@@ -51,8 +51,10 @@ final class Board
         $this->validateNoDuplicates($this->communityCards);
 
         // Create new shuffled deck if none provided and at preflop
-        if ($deck === null && $this->street === Street::PREFLOP) {
+        if ($deck === null) {
             $this->deck = Deck::shuffled();
+        } else {
+            $this->deck = $deck;
         }
 
         // If community cards provided, validate deck state

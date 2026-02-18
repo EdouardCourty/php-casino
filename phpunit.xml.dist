@@ -17,9 +17,6 @@
         <testsuite name="Project Test Suite">
             <directory>tests</directory>
         </testsuite>
-        <testsuite name="Poker">
-            <directory>tests/Poker</directory>
-        </testsuite>
     </testsuites>
 
     <source>

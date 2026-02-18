@@ -5,7 +5,6 @@ A comprehensive PHP library for simulating casino games including Poker, Roulett
 ## Table of Contents
 
 - [Quick Start](#quick-start)
-- [Installation](#installation)
 - [Core Features](#core-features)
 - [Usage](#usage)
   - [Poker](#poker)
@@ -56,18 +55,6 @@ $evaluator = new HandEvaluator();
 $hand = $evaluator->evaluate($playerCards, $board->getCommunityCards());
 echo $hand->getDetailedDescription(); // e.g., "Full House (Aces over Kings)"
 ```
-
-## Installation
-
-Install via Composer:
-
-```bash
-composer require ecourty/php-casino
-```
-
-**Requirements:**
-- PHP 8.4 or higher
-- No additional dependencies (standalone library)
 
 ## Core Features
 
