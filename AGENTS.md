@@ -83,14 +83,32 @@ Each game module typically contains:
 
 ### Planned Modules
 
-**Common Module** (`src/Common/`) - To be developed
+**Common Module** (`src/Common/`)
 - Shared Card and Deck classes
+- CardRank and CardSuit enums
 - Common utilities and interfaces used across all games
 
-**Blackjack Module** (`src/Blackjack/`) - To be developed
-- Card dealing and hand evaluation
-- Dealer rules and player actions
-- Bet management and game flow
+**Blackjack Module** (`src/Blackjack/`)
+- ActionType enum (HIT, STAND, DOUBLE_DOWN, SPLIT, SURRENDER, INSURANCE)
+- GameResult enum (PLAYER_WIN, DEALER_WIN, PUSH, PLAYER_BLACKJACK, DEALER_BLACKJACK, PLAYER_BUST, DEALER_BUST)
+- HandType enum (SOFT, HARD, BLACKJACK, BUST)
+- ProbabilityCalculationMethod enum (ENUMERATION, MONTE_CARLO)
+- Models: Hand, Shoe, GameRules, ProbabilityResult
+- Services: HandEvaluator, ProbabilityCalculator (main dispatcher)
+- ProbabilityCalculator/ subdirectory: ExactProbabilityCalculator, MonteCarloProbabilityCalculator
+- Hand class manages player/dealer cards with soft/hard detection
+- Shoe class manages 1-8 decks with cut card and penetration support
+- GameRules value object with presets (standard, european, vegas, singleDeck)
+- HandEvaluator for value calculation (Ace as 1 or 11), blackjack detection, hand comparison
+- ProbabilityCalculator dispatches to exact or Monte Carlo based on method enum (like Poker's EquityCalculator)
+- ExactProbabilityCalculator enumerates all possible dealer hole cards (best for 1-2 decks)
+- MonteCarloProbabilityCalculator uses random sampling (best for 4-8 decks, configurable iterations)
+- Custom exceptions: InvalidShoeException, InvalidHandException, InvalidActionException
+- Organized into Enum/, Model/, Service/, Service/ProbabilityCalculator/, and Exception/ subdirectories
+
+### Planned Modules
+
+None - all planned modules are now implemented!
 
 **IMPORTANT**: This section should evolve with the project. When a new feature is created, updated or removed, this section should too.
 

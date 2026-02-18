@@ -20,6 +20,12 @@ A comprehensive PHP library for simulating casino games including Poker, Roulett
     - [Bet Validation](#bet-validation)
     - [Calculating Odds & Probabilities](#calculating-odds--probabilities)
     - [Complete Game Flow](#complete-game-flow)
+  - [Blackjack](#blackjack)
+    - [Shoe Management](#shoe-management)
+    - [Hand Evaluation](#hand-evaluation-1)
+    - [Game Rules & Variations](#game-rules--variations)
+    - [Probability Calculation](#probability-calculation)
+    - [Complete Game Scenario](#complete-game-scenario)
 - [Development](#development)
 - [Testing](#testing)
 - [License](#license)
@@ -87,9 +93,17 @@ composer require ecourty/php-casino
 - **Odds Calculator**: Calculate win probabilities, expected value, house edge, and detailed statistics for any bet
 - **Type Safety**: Fully typed with enums for bet types, roulette types, and numbers
 
+### Blackjack Module
+
+- **Shoe Management**: Multi-deck shoe (1-8 decks) with cut card and penetration support
+- **Hand Evaluation**: Soft/hard hand detection, automatic Ace value calculation (1 or 11)
+- **Game Rules**: Comprehensive rule system (dealer soft 17, double after split, surrender, insurance, blackjack payouts)
+- **Probability Calculators**: Win/loss/push probabilities using exact enumeration or Monte Carlo simulation
+- **Type Safety**: Fully typed with enums for actions, game results, and hand types
+
 ### Coming Soon
 
-- **Blackjack Module**: Card dealing, hand evaluation, dealer rules, player actions
+- **Blackjack Module**: Coming soon!
 
 ## Usage
 
@@ -550,6 +564,442 @@ echo "Net result: " . ($netResult >= 0 ? "+$netResult" : "$netResult") . "\n";
 | Column | 2:1 | €30 total (€20 profit) |
 | Red/Black/Even/Odd/Low/High | 1:1 | €20 total (€10 profit) |
 
+### Blackjack
+
+#### Shoe Management
+
+```php
+use Ecourty\PHPCasino\Blackjack\Model\Shoe;
+use Ecourty\PHPCasino\Blackjack\Model\GameRules;
+
+// Create a 6-deck shoe with 75% penetration
+$shoe = new Shoe(deckCount: 6, penetration: 0.75);
+
+// Shuffle the shoe
+$shoe->shuffle();
+
+// Draw cards
+$cards = $shoe->draw(2); // Deal 2 cards
+echo $shoe->getCardCount(); // 310 cards remaining
+
+// Check if reshuffle is needed (based on cut card position)
+if ($shoe->needsReshuffle()) {
+    $shoe->reshuffle(); // Reset and shuffle
+}
+
+// Create shoe from game rules
+$rules = GameRules::standard();
+$shoe = Shoe::fromGameRules($rules);
+
+// Get shoe information
+$deckCount = $shoe->getDeckCount();           // 6
+$totalCards = $shoe->getTotalCardCount();     // 312
+$remaining = $shoe->getCardCount();           // Current cards in shoe
+$dealt = $shoe->getCardsDealt();              // Cards dealt since last shuffle
+$cutPosition = $shoe->getCutCardPosition();   // 234 (75% of 312)
+```
+
+#### Hand Evaluation
+
+The HandEvaluator service handles all hand value calculations, including soft/hard Ace logic:
+
+```php
+use Ecourty\PHPCasino\Blackjack\Model\Hand;
+use Ecourty\PHPCasino\Blackjack\Service\HandEvaluator;
+use Ecourty\PHPCasino\Common\Model\Card;
+use Ecourty\PHPCasino\Common\Enum\CardRank;
+use Ecourty\PHPCasino\Common\Enum\CardSuit;
+
+$evaluator = new HandEvaluator();
+
+// Create a hand
+$hand = Hand::fromCards(
+    new Card(CardRank::ACE, CardSuit::SPADES),
+    new Card(CardRank::SIX, CardSuit::HEARTS)
+);
+
+// Get hand value (automatically handles Ace as 1 or 11)
+echo $evaluator->getHandValue($hand); // 17 (Ace counted as 11)
+
+// Check hand type
+$type = $evaluator->getHandType($hand); // HandType::SOFT
+
+// Check specific conditions
+if ($evaluator->isSoft($hand)) {
+    echo "Soft hand (Ace counted as 11)\n";
+}
+
+if ($evaluator->isBlackjack($hand)) {
+    echo "Blackjack! (21 with 2 cards: Ace + 10-value)\n";
+}
+
+if ($evaluator->isBust($hand)) {
+    echo "Bust (over 21)\n";
+}
+
+// Examples with different hands
+$hardHand = Hand::fromCards(
+    new Card(CardRank::ACE, CardSuit::SPADES),
+    new Card(CardRank::KING, CardSuit::HEARTS),
+    new Card(CardRank::FIVE, CardSuit::CLUBS)
+);
+echo $evaluator->getHandValue($hardHand); // 16 (Ace counted as 1)
+echo $evaluator->isSoft($hardHand);       // false (hard hand)
+
+$blackjack = Hand::fromCards(
+    new Card(CardRank::ACE, CardSuit::SPADES),
+    new Card(CardRank::KING, CardSuit::HEARTS)
+);
+echo $evaluator->isBlackjack($blackjack); // true
+echo $evaluator->getHandValue($blackjack); // 21
+
+// Compare player vs dealer hands
+$playerHand = Hand::fromCards(
+    new Card(CardRank::TEN, CardSuit::SPADES),
+    new Card(CardRank::NINE, CardSuit::HEARTS)
+);
+
+$dealerHand = Hand::fromCards(
+    new Card(CardRank::KING, CardSuit::CLUBS),
+    new Card(CardRank::SEVEN, CardSuit::DIAMONDS)
+);
+
+$result = $evaluator->compare($playerHand, $dealerHand);
+echo $result->getName(); // "Player Win"
+
+// Check if dealer should hit
+$rules = GameRules::standard();
+if ($evaluator->shouldDealerHit($dealerHand, $rules)) {
+    echo "Dealer must hit\n";
+} else {
+    echo "Dealer must stand\n";
+}
+```
+
+#### Game Rules & Variations
+
+Configure game rules to match different casino variations:
+
+```php
+use Ecourty\PHPCasino\Blackjack\Model\GameRules;
+
+// Standard 6-deck rules
+$standard = GameRules::standard();
+echo $standard->deckCount;                 // 6
+echo $standard->dealerHitsOnSoft17;        // false
+echo $standard->blackjackPayout;           // 1.5 (3:2 payout)
+echo $standard->doubleAfterSplitAllowed;   // true
+echo $standard->surrenderAllowed;          // true
+echo $standard->insuranceAllowed;          // true
+echo $standard->shoePenetration;           // 0.75
+
+// European Blackjack rules
+$european = GameRules::european();
+echo $european->doubleAfterSplitAllowed;   // false
+echo $european->surrenderAllowed;          // false
+
+// Vegas Strip rules
+$vegas = GameRules::vegas();
+echo $vegas->dealerHitsOnSoft17;          // true
+
+// Single deck rules
+$singleDeck = GameRules::singleDeck();
+echo $singleDeck->deckCount;              // 1
+echo $singleDeck->shoePenetration;        // 0.5
+
+// Custom rules
+$custom = new GameRules(
+    deckCount: 8,
+    dealerHitsOnSoft17: true,
+    blackjackPayout: 1.2,              // 6:5 payout (less favorable)
+    doubleAfterSplitAllowed: false,
+    surrenderAllowed: false,
+    insuranceAllowed: false,
+    shoePenetration: 0.6,
+);
+```
+
+#### Probability Calculation
+
+Calculate win/loss/push probabilities using the unified ProbabilityCalculator with two methods:
+
+**Using the main ProbabilityCalculator (recommended):**
+
+```php
+use Ecourty\PHPCasino\Blackjack\Service\ProbabilityCalculator;
+use Ecourty\PHPCasino\Blackjack\Service\ProbabilityCalculator\ExactProbabilityCalculator;
+use Ecourty\PHPCasino\Blackjack\Service\ProbabilityCalculator\MonteCarloProbabilityCalculator;
+use Ecourty\PHPCasino\Blackjack\Enum\ProbabilityCalculationMethod;
+use Ecourty\PHPCasino\Blackjack\Model\Hand;
+use Ecourty\PHPCasino\Blackjack\Model\Shoe;
+use Ecourty\PHPCasino\Blackjack\Model\GameRules;
+use Ecourty\PHPCasino\Common\Model\Card;
+use Ecourty\PHPCasino\Common\Enum\CardRank;
+use Ecourty\PHPCasino\Common\Enum\CardSuit;
+
+// Create the calculator (dependency injection)
+$calculator = new ProbabilityCalculator(
+    new ExactProbabilityCalculator(),
+    new MonteCarloProbabilityCalculator()
+);
+
+// Player's hand (standing at 19)
+$playerHand = Hand::fromCards(
+    new Card(CardRank::TEN, CardSuit::SPADES),
+    new Card(CardRank::NINE, CardSuit::HEARTS)
+);
+
+// Dealer's visible card
+$dealerUpCard = new Card(CardRank::SIX, CardSuit::CLUBS);
+
+// Known cards (player's cards + dealer's up card)
+$knownCards = [
+    new Card(CardRank::TEN, CardSuit::SPADES),
+    new Card(CardRank::NINE, CardSuit::HEARTS),
+    new Card(CardRank::SIX, CardSuit::CLUBS),
+];
+
+$shoe = new Shoe(6);
+$rules = GameRules::standard();
+
+// Method 1: Enumeration (exact, best for 1-2 decks)
+$result = $calculator->calculate(
+    $playerHand,
+    $dealerUpCard,
+    $knownCards,
+    $shoe,
+    $rules,
+    ProbabilityCalculationMethod::ENUMERATION
+);
+
+// Method 2: Monte Carlo (fast, best for 4-8 decks) - DEFAULT
+$result = $calculator->calculate(
+    $playerHand,
+    $dealerUpCard,
+    $knownCards,
+    $shoe,
+    $rules,
+    ProbabilityCalculationMethod::MONTE_CARLO,
+    iterations: 10000
+);
+
+// Or use default (Monte Carlo with 10,000 iterations)
+$result = $calculator->calculate($playerHand, $dealerUpCard, $knownCards, $shoe, $rules);
+
+echo "Win Probability: " . $result->getWinProbabilityPercent() . "%\n";
+echo "Loss Probability: " . $result->getLossProbabilityPercent() . "%\n";
+echo "Push Probability: " . $result->getPushProbabilityPercent() . "%\n";
+echo "Expected Value: " . $result->expectedValue . "\n";
+echo "Scenarios Analyzed: " . $result->scenariosConsidered . "\n";
+```
+
+**Or use calculators directly (for more control):**
+
+**1. Exact Enumeration (Precise, best for 1-2 decks):**
+
+```php
+use Ecourty\PHPCasino\Blackjack\Model\GameRules;use Ecourty\PHPCasino\Blackjack\Model\Hand;use Ecourty\PHPCasino\Blackjack\Model\Shoe;use Ecourty\PHPCasino\Blackjack\Service\ProbabilityCalculator\ExactProbabilityCalculator;use Ecourty\PHPCasino\Common\Enum\CardRank;use Ecourty\PHPCasino\Common\Enum\CardSuit;use Ecourty\PHPCasino\Common\Model\Card;
+
+$calculator = new ExactProbabilityCalculator();
+
+// Player's hand (standing at 19)
+$playerHand = Hand::fromCards(
+    new Card(CardRank::TEN, CardSuit::SPADES),
+    new Card(CardRank::NINE, CardSuit::HEARTS)
+);
+
+// Dealer's visible card
+$dealerUpCard = new Card(CardRank::SIX, CardSuit::CLUBS);
+
+// Known cards (player's cards + dealer's up card)
+$knownCards = [
+    new Card(CardRank::TEN, CardSuit::SPADES),
+    new Card(CardRank::NINE, CardSuit::HEARTS),
+    new Card(CardRank::SIX, CardSuit::CLUBS),
+];
+
+$shoe = new Shoe(1); // Single deck for exact calculation
+$rules = GameRules::standard();
+
+$result = $calculator->calculate($playerHand, $dealerUpCard, $knownCards, $shoe, $rules);
+
+echo "Method: " . $result->method . "\n";                          // "exact"
+echo "Win Probability: " . $result->getWinProbabilityPercent() . "%\n";
+echo "Loss Probability: " . $result->getLossProbabilityPercent() . "%\n";
+echo "Push Probability: " . $result->getPushProbabilityPercent() . "%\n";
+echo "Expected Value: " . $result->expectedValue . "\n";           // Positive = player advantage
+echo "Scenarios Analyzed: " . $result->scenariosConsidered . "\n"; // All possible dealer hole cards
+
+if ($result->isPlayerFavored()) {
+    echo "Player is favored to win!\n";
+}
+```
+
+**2. Monte Carlo Simulation (Fast, best for 4-8 decks):**
+
+```php
+use Ecourty\PHPCasino\Blackjack\Service\ProbabilityCalculator\MonteCarloProbabilityCalculator;
+
+$calculator = new MonteCarloProbabilityCalculator();
+
+// Same setup as above
+$playerHand = Hand::fromCards(
+    new Card(CardRank::KING, CardSuit::SPADES),
+    new Card(CardRank::TEN, CardSuit::HEARTS)
+);
+
+$dealerUpCard = new Card(CardRank::FIVE, CardSuit::CLUBS);
+
+$knownCards = [
+    new Card(CardRank::KING, CardSuit::SPADES),
+    new Card(CardRank::TEN, CardSuit::HEARTS),
+    new Card(CardRank::FIVE, CardSuit::CLUBS),
+];
+
+$shoe = new Shoe(6); // 6-deck shoe
+$rules = GameRules::standard();
+
+// Run 10,000 simulations (more iterations = more accurate)
+$result = $calculator->calculate(
+    $playerHand,
+    $dealerUpCard,
+    $knownCards,
+    $shoe,
+    $rules,
+    iterations: 10000
+);
+
+echo "Method: " . $result->method . "\n";                          // "monte_carlo"
+echo "Win Probability: " . $result->getWinProbabilityPercent() . "%\n";
+echo "Loss Probability: " . $result->getLossProbabilityPercent() . "%\n";
+echo "Push Probability: " . $result->getPushProbabilityPercent() . "%\n";
+echo "Expected Value: " . $result->expectedValue . "\n";
+echo "Simulations Run: " . $result->scenariosConsidered . "\n";    // 10,000
+
+// Higher iterations for more precision (slower but more accurate)
+$preciseResult = $calculator->calculate($playerHand, $dealerUpCard, $knownCards, $shoe, $rules, 100000);
+```
+
+**Key Insights:**
+
+- **Main Calculator**: Use `ProbabilityCalculator` for clean API with method dispatch
+- **Direct Calculators**: Use specific calculators for fine-grained control
+- **Enumeration Calculator**: Enumerates all possible dealer hole cards. Perfect accuracy but slow with many decks.
+- **Monte Carlo Calculator**: Randomly samples possible outcomes. Very fast, accuracy improves with more iterations.
+- **When to use which**: 
+  - 1-2 decks: Use Exact (fast enough and precise)
+  - 4-8 decks: Use Monte Carlo with 10,000+ iterations
+- **Player hand is frozen**: Calculations assume the player stands with their current hand
+- **Dealer follows rules**: Simulations respect dealerHitsOnSoft17 and other game rules
+
+#### Complete Game Scenario
+
+```php
+use Ecourty\PHPCasino\Blackjack\Model\{GameRules,Hand,Shoe};use Ecourty\PHPCasino\Blackjack\Service\{HandEvaluator,ProbabilityCalculator\MonteCarloProbabilityCalculator};
+
+// Setup game with Vegas rules
+$rules = GameRules::vegas();
+$shoe = Shoe::fromGameRules($rules);
+$shoe->shuffle();
+
+$evaluator = new HandEvaluator();
+$probabilityCalc = new ProbabilityCalculator(
+    new ExactProbabilityCalculator(),
+    new MonteCarloProbabilityCalculator()
+);
+
+// Deal initial cards
+[$playerCard1, $playerCard2, $dealerUpCard, $dealerHoleCard] = $shoe->draw(4);
+
+$playerHand = Hand::fromCards($playerCard1, $playerCard2);
+$dealerHand = Hand::fromCards($dealerUpCard, $dealerHoleCard);
+
+echo "=== BLACKJACK GAME ===\n\n";
+echo "Player's Hand: {$playerCard1} {$playerCard2}\n";
+echo "Player's Value: " . $evaluator->getHandValue($playerHand) . "\n";
+echo "Player's Type: " . $evaluator->getHandType($playerHand)->getName() . "\n\n";
+
+echo "Dealer's Up Card: {$dealerUpCard}\n";
+echo "Dealer's Hole Card: [Hidden]\n\n";
+
+// Check for blackjack
+if ($evaluator->isBlackjack($playerHand)) {
+    echo "PLAYER BLACKJACK! 🎉\n";
+    $payout = 100 * $rules->blackjackPayout; // e.g., $150 for 3:2 on $100 bet
+    echo "Payout: $" . $payout . "\n";
+    exit;
+}
+
+// Calculate probabilities (player decides whether to hit or stand)
+$knownCards = [$playerCard1, $playerCard2, $dealerUpCard];
+$probabilities = $probabilityCalc->calculate(
+    $playerHand,
+    $dealerUpCard,
+    $knownCards,
+    $shoe,
+    $rules,
+    ProbabilityCalculationMethod::MONTE_CARLO,
+    10000
+);
+
+echo "=== PROBABILITY ANALYSIS ===\n";
+echo "If you STAND:\n";
+echo "  Win: " . number_format($probabilities->getWinProbabilityPercent(), 2) . "%\n";
+echo "  Loss: " . number_format($probabilities->getLossProbabilityPercent(), 2) . "%\n";
+echo "  Push: " . number_format($probabilities->getPushProbabilityPercent(), 2) . "%\n";
+echo "  Expected Value: $" . number_format($probabilities->expectedValue * 100, 2) . " (per $100 bet)\n\n";
+
+// Player action: Can double down?
+if ($playerHand->canDoubleDown()) {
+    echo "Double down available!\n";
+}
+
+// Player action: Can split?
+if ($playerHand->canSplit()) {
+    echo "Split available!\n";
+}
+
+// Simulate player stands and dealer plays
+echo "\n=== DEALER PLAYS ===\n";
+echo "Dealer's Hole Card: {$dealerHoleCard}\n";
+echo "Dealer's Hand: {$dealerUpCard} {$dealerHoleCard}\n";
+echo "Dealer's Value: " . $evaluator->getHandValue($dealerHand) . "\n";
+
+while ($evaluator->shouldDealerHit($dealerHand, $rules)) {
+    $nextCard = $shoe->draw(1)[0];
+    $dealerHand->addCard($nextCard);
+    echo "Dealer hits: {$nextCard}\n";
+    echo "Dealer's Value: " . $evaluator->getHandValue($dealerHand) . "\n";
+    
+    if ($evaluator->isBust($dealerHand)) {
+        echo "Dealer BUSTS!\n";
+        break;
+    }
+}
+
+// Determine winner
+echo "\n=== RESULT ===\n";
+$result = $evaluator->compare($playerHand, $dealerHand, $rules);
+echo $result->getName() . "\n";
+
+if ($result->isPlayerVictory()) {
+    echo "You win! 🎉\n";
+    $payout = 200; // $100 bet + $100 win
+    echo "Payout: $" . $payout . "\n";
+} elseif ($result->isPush()) {
+    echo "Push (tie)\n";
+    echo "Payout: $100 (bet returned)\n";
+} else {
+    echo "Dealer wins\n";
+    echo "Loss: -$100\n";
+}
+
+// Check if shoe needs reshuffle
+if ($shoe->needsReshuffle()) {
+    echo "\n[Cut card reached - shoe will be reshuffled]\n";
+}
+```
+
 ## Development
 
 ### Project Structure
@@ -564,9 +1014,17 @@ php-casino/
 │   │   └── Exception/    # Domain exceptions
 │   ├── Roulette/
 │   │   ├── Enum/         # RouletteNumber, RouletteType, BetType
-│   │   ├── Model/        # Board, Bet
+│   │   ├── Model/        # Board, Bet, OddsResult
+│   │   ├── Service/      # BetValidator, OddsCalculator
 │   │   └── Exception/    # Domain exceptions
-│   └── Blackjack/        # Coming soon
+│   ├── Blackjack/
+│   │   ├── Enum/         # ActionType, GameResult, HandType
+│   │   ├── Model/        # Hand, Shoe, GameRules, ProbabilityResult
+│   │   ├── Service/      # HandEvaluator, ExactProbabilityCalculator, MonteCarloProbabilityCalculator
+│   │   └── Exception/    # Domain exceptions
+│   └── Common/
+│       ├── Enum/         # CardRank, CardSuit
+│       └── Model/        # Card, Deck
 └── tests/
     ├── Unit/
     ├── Integration/
@@ -619,6 +1077,7 @@ The library is thoroughly tested with unit, integration, and functional tests:
 Test coverage includes:
 - **Poker Module**: Board management, hand evaluation, equity calculation
 - **Roulette Module**: Number properties, betting system, spin mechanics, odds calculation (194 tests, 664 assertions)
+- **Blackjack Module**: Shoe management, hand evaluation, probability calculation (74 tests, 145 assertions)
 
 Run the full test suite:
 
