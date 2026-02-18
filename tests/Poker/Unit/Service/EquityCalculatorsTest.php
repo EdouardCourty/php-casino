@@ -153,9 +153,6 @@ class EquityCalculatorsTest extends TestCase
         $this->assertArrayHasKey('wins', $mcStats);
         $this->assertArrayHasKey('ties', $mcStats);
         $this->assertArrayHasKey('total', $mcStats);
-        $this->assertIsInt($mcStats['wins']);
-        $this->assertIsInt($mcStats['ties']);
-        $this->assertIsInt($mcStats['total']);
     }
 
     public function testEnumerationReturnsCorrectKeys(): void
@@ -169,9 +166,6 @@ class EquityCalculatorsTest extends TestCase
         $this->assertArrayHasKey('wins', $enumStats);
         $this->assertArrayHasKey('ties', $enumStats);
         $this->assertArrayHasKey('total', $enumStats);
-        $this->assertIsInt($enumStats['wins']);
-        $this->assertIsInt($enumStats['ties']);
-        $this->assertIsInt($enumStats['total']);
     }
 
     public function testWinsPlusTiesPlusLossesEqualsTotal(): void

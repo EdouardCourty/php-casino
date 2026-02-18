@@ -26,12 +26,12 @@ final class Board
     private Deck $deck;
 
     /**
-     * @throws InvalidCardCountException If card count doesn't match street requirement
-     * @throws DuplicateCardException If duplicate cards found in community cards or deck contains community cards
-     * @throws InvalidBoardStateException If deck burn count is incorrect for the current street
      *@param Street $street Current street (preflop, flop, turn, river, showdown)
      * @param array<Card> $communityCards Community cards on the board
      * @param Deck|null $deck Optional deck for automatic dealing (creates new shuffled deck if null at preflop)
+     * @throws InvalidCardCountException If card count doesn't match street requirement
+     * @throws DuplicateCardException If duplicate cards found in community cards or deck contains community cards
+     * @throws InvalidBoardStateException If deck burn count is incorrect for the current street
      *
      */
     public function __construct(

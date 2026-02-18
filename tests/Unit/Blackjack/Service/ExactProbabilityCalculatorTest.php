@@ -26,7 +26,7 @@ final class ExactProbabilityCalculatorTest extends TestCase
     {
         $playerHand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
-            new Card(CardRank::NINE, CardSuit::HEARTS)
+            new Card(CardRank::NINE, CardSuit::HEARTS),
         );
 
         $dealerUpCard = new Card(CardRank::SIX, CardSuit::CLUBS);
@@ -52,7 +52,7 @@ final class ExactProbabilityCalculatorTest extends TestCase
     {
         $playerHand = Hand::fromCards(
             new Card(CardRank::KING, CardSuit::SPADES),
-            new Card(CardRank::TEN, CardSuit::HEARTS)
+            new Card(CardRank::TEN, CardSuit::HEARTS),
         );
 
         $dealerUpCard = new Card(CardRank::FIVE, CardSuit::CLUBS);
@@ -76,7 +76,7 @@ final class ExactProbabilityCalculatorTest extends TestCase
     {
         $playerHand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
-            new Card(CardRank::NINE, CardSuit::HEARTS)
+            new Card(CardRank::NINE, CardSuit::HEARTS),
         );
 
         $dealerUpCard = new Card(CardRank::SIX, CardSuit::CLUBS);

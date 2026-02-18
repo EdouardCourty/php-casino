@@ -237,7 +237,6 @@ class HandTest extends TestCase
 
         $array = $hand->toArray();
 
-        $this->assertIsArray($array);
         $this->assertArrayHasKey('rank', $array);
         $this->assertArrayHasKey('kickers', $array);
         $this->assertArrayHasKey('cards', $array);
@@ -304,8 +303,8 @@ class HandTest extends TestCase
 
         // PHP 8.1+ readonly properties cannot be modified
         // This test just verifies the hand exists and is accessible
-        $this->assertIsArray($hand->cards);
-        $this->assertIsArray($hand->kickers);
+        $this->assertCount(0, $hand->cards);
+        $this->assertCount(0, $hand->kickers);
     }
 
     public function testMultipleHandRanksCanBeCompared(): void

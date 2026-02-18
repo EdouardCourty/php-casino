@@ -29,7 +29,7 @@ final class ExactProbabilityCalculator
         Card $dealerUpCard,
         array $knownCards,
         Shoe $shoe,
-        GameRules $rules
+        GameRules $rules,
     ): ProbabilityResult {
         $playerHand->validateNotEmpty();
 

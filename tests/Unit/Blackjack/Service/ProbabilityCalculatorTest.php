@@ -20,17 +20,14 @@ final class ProbabilityCalculatorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->calculator = new ProbabilityCalculator(
-            new \Ecourty\PHPCasino\Blackjack\Service\ProbabilityCalculator\ExactProbabilityCalculator(),
-            new \Ecourty\PHPCasino\Blackjack\Service\ProbabilityCalculator\MonteCarloProbabilityCalculator(),
-        );
+        $this->calculator = ProbabilityCalculator::create();
     }
 
     public function testCalculateWithEnumerationMethod(): void
     {
         $playerHand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
-            new Card(CardRank::NINE, CardSuit::HEARTS)
+            new Card(CardRank::NINE, CardSuit::HEARTS),
         );
 
         $dealerUpCard = new Card(CardRank::SIX, CardSuit::CLUBS);
@@ -50,7 +47,7 @@ final class ProbabilityCalculatorTest extends TestCase
             $knownCards,
             $shoe,
             $rules,
-            ProbabilityCalculationMethod::ENUMERATION
+            ProbabilityCalculationMethod::ENUMERATION,
         );
 
         $this->assertGreaterThan(0, $result->scenariosConsidered);
@@ -62,7 +59,7 @@ final class ProbabilityCalculatorTest extends TestCase
     {
         $playerHand = Hand::fromCards(
             new Card(CardRank::KING, CardSuit::SPADES),
-            new Card(CardRank::TEN, CardSuit::HEARTS)
+            new Card(CardRank::TEN, CardSuit::HEARTS),
         );
 
         $dealerUpCard = new Card(CardRank::FIVE, CardSuit::CLUBS);
@@ -83,7 +80,7 @@ final class ProbabilityCalculatorTest extends TestCase
             $shoe,
             $rules,
             ProbabilityCalculationMethod::MONTE_CARLO,
-            1000
+            1000,
         );
 
         $this->assertSame(1000, $result->scenariosConsidered);
@@ -95,7 +92,7 @@ final class ProbabilityCalculatorTest extends TestCase
     {
         $playerHand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::SPADES),
-            new Card(CardRank::KING, CardSuit::HEARTS)
+            new Card(CardRank::KING, CardSuit::HEARTS),
         );
 
         $dealerUpCard = new Card(CardRank::SEVEN, CardSuit::CLUBS);
@@ -114,7 +111,7 @@ final class ProbabilityCalculatorTest extends TestCase
             $dealerUpCard,
             $knownCards,
             $shoe,
-            $rules
+            $rules,
         );
 
         $this->assertSame(10000, $result->scenariosConsidered);
@@ -124,7 +121,7 @@ final class ProbabilityCalculatorTest extends TestCase
     {
         $playerHand = Hand::fromCards(
             new Card(CardRank::QUEEN, CardSuit::SPADES),
-            new Card(CardRank::JACK, CardSuit::HEARTS)
+            new Card(CardRank::JACK, CardSuit::HEARTS),
         );
 
         $dealerUpCard = new Card(CardRank::EIGHT, CardSuit::CLUBS);
@@ -145,7 +142,7 @@ final class ProbabilityCalculatorTest extends TestCase
             $shoe,
             $rules,
             ProbabilityCalculationMethod::MONTE_CARLO,
-            50000
+            50000,
         );
 
         $this->assertSame(50000, $result->scenariosConsidered);

@@ -27,7 +27,7 @@ final class HandEvaluatorTest extends TestCase
     {
         $hand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
-            new Card(CardRank::FIVE, CardSuit::HEARTS)
+            new Card(CardRank::FIVE, CardSuit::HEARTS),
         );
 
         $this->assertSame(15, $this->evaluator->getHandValue($hand));
@@ -37,7 +37,7 @@ final class HandEvaluatorTest extends TestCase
     {
         $hand = Hand::fromCards(
             new Card(CardRank::KING, CardSuit::SPADES),
-            new Card(CardRank::QUEEN, CardSuit::HEARTS)
+            new Card(CardRank::QUEEN, CardSuit::HEARTS),
         );
 
         $this->assertSame(20, $this->evaluator->getHandValue($hand));
@@ -47,7 +47,7 @@ final class HandEvaluatorTest extends TestCase
     {
         $hand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::SPADES),
-            new Card(CardRank::SIX, CardSuit::HEARTS)
+            new Card(CardRank::SIX, CardSuit::HEARTS),
         );
 
         $this->assertSame(17, $this->evaluator->getHandValue($hand));
@@ -58,7 +58,7 @@ final class HandEvaluatorTest extends TestCase
         $hand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::SPADES),
             new Card(CardRank::KING, CardSuit::HEARTS),
-            new Card(CardRank::FIVE, CardSuit::CLUBS)
+            new Card(CardRank::FIVE, CardSuit::CLUBS),
         );
 
         $this->assertSame(16, $this->evaluator->getHandValue($hand));
@@ -69,7 +69,7 @@ final class HandEvaluatorTest extends TestCase
         $hand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::SPADES),
             new Card(CardRank::ACE, CardSuit::HEARTS),
-            new Card(CardRank::NINE, CardSuit::CLUBS)
+            new Card(CardRank::NINE, CardSuit::CLUBS),
         );
 
         $this->assertSame(21, $this->evaluator->getHandValue($hand));
@@ -79,7 +79,7 @@ final class HandEvaluatorTest extends TestCase
     {
         $hand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::SPADES),
-            new Card(CardRank::KING, CardSuit::HEARTS)
+            new Card(CardRank::KING, CardSuit::HEARTS),
         );
 
         $this->assertSame(21, $this->evaluator->getHandValue($hand));
@@ -90,7 +90,7 @@ final class HandEvaluatorTest extends TestCase
         $hand = Hand::fromCards(
             new Card(CardRank::KING, CardSuit::SPADES),
             new Card(CardRank::QUEEN, CardSuit::HEARTS),
-            new Card(CardRank::FIVE, CardSuit::CLUBS)
+            new Card(CardRank::FIVE, CardSuit::CLUBS),
         );
 
         $this->assertSame(25, $this->evaluator->getHandValue($hand));
@@ -100,7 +100,7 @@ final class HandEvaluatorTest extends TestCase
     {
         $hand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::SPADES),
-            new Card(CardRank::JACK, CardSuit::HEARTS)
+            new Card(CardRank::JACK, CardSuit::HEARTS),
         );
 
         $this->assertTrue($this->evaluator->isBlackjack($hand));
@@ -111,7 +111,7 @@ final class HandEvaluatorTest extends TestCase
         $hand = Hand::fromCards(
             new Card(CardRank::SEVEN, CardSuit::SPADES),
             new Card(CardRank::SEVEN, CardSuit::HEARTS),
-            new Card(CardRank::SEVEN, CardSuit::CLUBS)
+            new Card(CardRank::SEVEN, CardSuit::CLUBS),
         );
 
         $this->assertFalse($this->evaluator->isBlackjack($hand));
@@ -122,7 +122,7 @@ final class HandEvaluatorTest extends TestCase
         $hand = Hand::fromCards(
             new Card(CardRank::KING, CardSuit::SPADES),
             new Card(CardRank::QUEEN, CardSuit::HEARTS),
-            new Card(CardRank::FIVE, CardSuit::CLUBS)
+            new Card(CardRank::FIVE, CardSuit::CLUBS),
         );
 
         $this->assertTrue($this->evaluator->isBust($hand));
@@ -132,7 +132,7 @@ final class HandEvaluatorTest extends TestCase
     {
         $hand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
-            new Card(CardRank::FIVE, CardSuit::HEARTS)
+            new Card(CardRank::FIVE, CardSuit::HEARTS),
         );
 
         $this->assertFalse($this->evaluator->isBust($hand));
@@ -142,7 +142,7 @@ final class HandEvaluatorTest extends TestCase
     {
         $hand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::SPADES),
-            new Card(CardRank::SIX, CardSuit::HEARTS)
+            new Card(CardRank::SIX, CardSuit::HEARTS),
         );
 
         $this->assertTrue($this->evaluator->isSoft($hand));
@@ -153,7 +153,7 @@ final class HandEvaluatorTest extends TestCase
         $hand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::SPADES),
             new Card(CardRank::KING, CardSuit::HEARTS),
-            new Card(CardRank::FIVE, CardSuit::CLUBS)
+            new Card(CardRank::FIVE, CardSuit::CLUBS),
         );
 
         $this->assertFalse($this->evaluator->isSoft($hand));
@@ -163,7 +163,7 @@ final class HandEvaluatorTest extends TestCase
     {
         $hand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::SPADES),
-            new Card(CardRank::KING, CardSuit::HEARTS)
+            new Card(CardRank::KING, CardSuit::HEARTS),
         );
 
         $this->assertSame(HandType::BLACKJACK, $this->evaluator->getHandType($hand));
@@ -174,7 +174,7 @@ final class HandEvaluatorTest extends TestCase
         $hand = Hand::fromCards(
             new Card(CardRank::KING, CardSuit::SPADES),
             new Card(CardRank::QUEEN, CardSuit::HEARTS),
-            new Card(CardRank::FIVE, CardSuit::CLUBS)
+            new Card(CardRank::FIVE, CardSuit::CLUBS),
         );
 
         $this->assertSame(HandType::BUST, $this->evaluator->getHandType($hand));
@@ -184,7 +184,7 @@ final class HandEvaluatorTest extends TestCase
     {
         $hand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::SPADES),
-            new Card(CardRank::SIX, CardSuit::HEARTS)
+            new Card(CardRank::SIX, CardSuit::HEARTS),
         );
 
         $this->assertSame(HandType::SOFT, $this->evaluator->getHandType($hand));
@@ -194,7 +194,7 @@ final class HandEvaluatorTest extends TestCase
     {
         $hand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
-            new Card(CardRank::SEVEN, CardSuit::HEARTS)
+            new Card(CardRank::SEVEN, CardSuit::HEARTS),
         );
 
         $this->assertSame(HandType::HARD, $this->evaluator->getHandType($hand));
@@ -204,12 +204,12 @@ final class HandEvaluatorTest extends TestCase
     {
         $playerHand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::SPADES),
-            new Card(CardRank::KING, CardSuit::HEARTS)
+            new Card(CardRank::KING, CardSuit::HEARTS),
         );
 
         $dealerHand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::CLUBS),
-            new Card(CardRank::NINE, CardSuit::DIAMONDS)
+            new Card(CardRank::NINE, CardSuit::DIAMONDS),
         );
 
         $result = $this->evaluator->compare($playerHand, $dealerHand);
@@ -221,12 +221,12 @@ final class HandEvaluatorTest extends TestCase
     {
         $playerHand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
-            new Card(CardRank::NINE, CardSuit::HEARTS)
+            new Card(CardRank::NINE, CardSuit::HEARTS),
         );
 
         $dealerHand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::CLUBS),
-            new Card(CardRank::KING, CardSuit::DIAMONDS)
+            new Card(CardRank::KING, CardSuit::DIAMONDS),
         );
 
         $result = $this->evaluator->compare($playerHand, $dealerHand);
@@ -238,12 +238,12 @@ final class HandEvaluatorTest extends TestCase
     {
         $playerHand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::SPADES),
-            new Card(CardRank::KING, CardSuit::HEARTS)
+            new Card(CardRank::KING, CardSuit::HEARTS),
         );
 
         $dealerHand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::CLUBS),
-            new Card(CardRank::QUEEN, CardSuit::DIAMONDS)
+            new Card(CardRank::QUEEN, CardSuit::DIAMONDS),
         );
 
         $result = $this->evaluator->compare($playerHand, $dealerHand);
@@ -255,12 +255,12 @@ final class HandEvaluatorTest extends TestCase
     {
         $playerHand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
-            new Card(CardRank::NINE, CardSuit::HEARTS)
+            new Card(CardRank::NINE, CardSuit::HEARTS),
         );
 
         $dealerHand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::CLUBS),
-            new Card(CardRank::SEVEN, CardSuit::DIAMONDS)
+            new Card(CardRank::SEVEN, CardSuit::DIAMONDS),
         );
 
         $result = $this->evaluator->compare($playerHand, $dealerHand);
@@ -272,12 +272,12 @@ final class HandEvaluatorTest extends TestCase
     {
         $playerHand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
-            new Card(CardRank::SEVEN, CardSuit::HEARTS)
+            new Card(CardRank::SEVEN, CardSuit::HEARTS),
         );
 
         $dealerHand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::CLUBS),
-            new Card(CardRank::NINE, CardSuit::DIAMONDS)
+            new Card(CardRank::NINE, CardSuit::DIAMONDS),
         );
 
         $result = $this->evaluator->compare($playerHand, $dealerHand);
@@ -289,12 +289,12 @@ final class HandEvaluatorTest extends TestCase
     {
         $playerHand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
-            new Card(CardRank::EIGHT, CardSuit::HEARTS)
+            new Card(CardRank::EIGHT, CardSuit::HEARTS),
         );
 
         $dealerHand = Hand::fromCards(
             new Card(CardRank::NINE, CardSuit::CLUBS),
-            new Card(CardRank::NINE, CardSuit::DIAMONDS)
+            new Card(CardRank::NINE, CardSuit::DIAMONDS),
         );
 
         $result = $this->evaluator->compare($playerHand, $dealerHand);
@@ -307,12 +307,12 @@ final class HandEvaluatorTest extends TestCase
         $playerHand = Hand::fromCards(
             new Card(CardRank::KING, CardSuit::SPADES),
             new Card(CardRank::QUEEN, CardSuit::HEARTS),
-            new Card(CardRank::FIVE, CardSuit::CLUBS)
+            new Card(CardRank::FIVE, CardSuit::CLUBS),
         );
 
         $dealerHand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::CLUBS),
-            new Card(CardRank::SEVEN, CardSuit::DIAMONDS)
+            new Card(CardRank::SEVEN, CardSuit::DIAMONDS),
         );
 
         $result = $this->evaluator->compare($playerHand, $dealerHand);
@@ -324,13 +324,13 @@ final class HandEvaluatorTest extends TestCase
     {
         $playerHand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
-            new Card(CardRank::SEVEN, CardSuit::HEARTS)
+            new Card(CardRank::SEVEN, CardSuit::HEARTS),
         );
 
         $dealerHand = Hand::fromCards(
             new Card(CardRank::KING, CardSuit::CLUBS),
             new Card(CardRank::QUEEN, CardSuit::DIAMONDS),
-            new Card(CardRank::FIVE, CardSuit::SPADES)
+            new Card(CardRank::FIVE, CardSuit::SPADES),
         );
 
         $result = $this->evaluator->compare($playerHand, $dealerHand);
@@ -342,7 +342,7 @@ final class HandEvaluatorTest extends TestCase
     {
         $dealerHand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
-            new Card(CardRank::FIVE, CardSuit::HEARTS)
+            new Card(CardRank::FIVE, CardSuit::HEARTS),
         );
 
         $rules = GameRules::standard();
@@ -354,7 +354,7 @@ final class HandEvaluatorTest extends TestCase
     {
         $dealerHand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
-            new Card(CardRank::SEVEN, CardSuit::HEARTS)
+            new Card(CardRank::SEVEN, CardSuit::HEARTS),
         );
 
         $rules = GameRules::standard();
@@ -366,7 +366,7 @@ final class HandEvaluatorTest extends TestCase
     {
         $dealerHand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::SPADES),
-            new Card(CardRank::SIX, CardSuit::HEARTS)
+            new Card(CardRank::SIX, CardSuit::HEARTS),
         );
 
         $rules = new GameRules(dealerHitsOnSoft17: true);
@@ -378,7 +378,7 @@ final class HandEvaluatorTest extends TestCase
     {
         $dealerHand = Hand::fromCards(
             new Card(CardRank::ACE, CardSuit::SPADES),
-            new Card(CardRank::SIX, CardSuit::HEARTS)
+            new Card(CardRank::SIX, CardSuit::HEARTS),
         );
 
         $rules = new GameRules(dealerHitsOnSoft17: false);

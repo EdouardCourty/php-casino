@@ -125,6 +125,7 @@ Unit tests can use mocks or stubs if needed.
 ### General
 
 - NEVER commit or push the git repository.
+- This project is **English-based**: all code (class names, method names, enum cases, string values, comments, exception messages, test descriptions) MUST be written in English.
 - When unsure about something, you MUST ask the user for clarification. Same goes it the user request is unclear.
 - When facing a problem that has an easy "hacky" solution, and a more robust but more difficult to implement one, always choose the robust one:
     - Easy hacky fixes become technical debt, and can lead to issues down the road

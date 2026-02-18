@@ -48,7 +48,7 @@ final class HandTest extends TestCase
     {
         $hand = Hand::fromCards(
             new Card(CardRank::EIGHT, CardSuit::SPADES),
-            new Card(CardRank::EIGHT, CardSuit::HEARTS)
+            new Card(CardRank::EIGHT, CardSuit::HEARTS),
         );
 
         $this->assertTrue($hand->canSplit());
@@ -58,7 +58,7 @@ final class HandTest extends TestCase
     {
         $hand = Hand::fromCards(
             new Card(CardRank::EIGHT, CardSuit::SPADES),
-            new Card(CardRank::SEVEN, CardSuit::HEARTS)
+            new Card(CardRank::SEVEN, CardSuit::HEARTS),
         );
 
         $this->assertFalse($hand->canSplit());
@@ -69,7 +69,7 @@ final class HandTest extends TestCase
         $hand = Hand::fromCards(
             new Card(CardRank::EIGHT, CardSuit::SPADES),
             new Card(CardRank::EIGHT, CardSuit::HEARTS),
-            new Card(CardRank::EIGHT, CardSuit::CLUBS)
+            new Card(CardRank::EIGHT, CardSuit::CLUBS),
         );
 
         $this->assertFalse($hand->canSplit());
@@ -79,7 +79,7 @@ final class HandTest extends TestCase
     {
         $hand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
-            new Card(CardRank::ACE, CardSuit::HEARTS)
+            new Card(CardRank::ACE, CardSuit::HEARTS),
         );
 
         $this->assertTrue($hand->canDoubleDown());
@@ -90,7 +90,7 @@ final class HandTest extends TestCase
         $hand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
             new Card(CardRank::ACE, CardSuit::HEARTS),
-            new Card(CardRank::FIVE, CardSuit::CLUBS)
+            new Card(CardRank::FIVE, CardSuit::CLUBS),
         );
 
         $this->assertFalse($hand->canDoubleDown());
@@ -110,7 +110,7 @@ final class HandTest extends TestCase
     {
         $hand = Hand::fromCards(
             new Card(CardRank::EIGHT, CardSuit::SPADES),
-            new Card(CardRank::SEVEN, CardSuit::HEARTS)
+            new Card(CardRank::SEVEN, CardSuit::HEARTS),
         );
 
         $this->expectException(InvalidHandException::class);
@@ -123,7 +123,7 @@ final class HandTest extends TestCase
         $hand = Hand::fromCards(
             new Card(CardRank::TEN, CardSuit::SPADES),
             new Card(CardRank::ACE, CardSuit::HEARTS),
-            new Card(CardRank::FIVE, CardSuit::CLUBS)
+            new Card(CardRank::FIVE, CardSuit::CLUBS),
         );
 
         $this->expectException(InvalidHandException::class);

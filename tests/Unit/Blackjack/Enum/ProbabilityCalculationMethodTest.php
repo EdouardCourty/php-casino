@@ -32,7 +32,7 @@ final class ProbabilityCalculationMethodTest extends TestCase
     public function testGetDescriptionForEnumeration(): void
     {
         $description = ProbabilityCalculationMethod::ENUMERATION->getDescription();
-        
+
         $this->assertStringContainsString('enumeration', $description);
         $this->assertStringContainsString('accuracy', $description);
     }
@@ -40,7 +40,7 @@ final class ProbabilityCalculationMethodTest extends TestCase
     public function testGetDescriptionForMonteCarlo(): void
     {
         $description = ProbabilityCalculationMethod::MONTE_CARLO->getDescription();
-        
+
         $this->assertStringContainsString('sampling', $description);
         $this->assertStringContainsString('fast', $description);
     }
@@ -48,7 +48,7 @@ final class ProbabilityCalculationMethodTest extends TestCase
     public function testAllCasesExist(): void
     {
         $cases = ProbabilityCalculationMethod::cases();
-        
+
         $this->assertCount(2, $cases);
         $this->assertContains(ProbabilityCalculationMethod::ENUMERATION, $cases);
         $this->assertContains(ProbabilityCalculationMethod::MONTE_CARLO, $cases);

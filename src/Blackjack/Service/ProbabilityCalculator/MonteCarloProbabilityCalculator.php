@@ -30,7 +30,7 @@ final class MonteCarloProbabilityCalculator
         array $knownCards,
         Shoe $shoe,
         GameRules $rules,
-        int $iterations = 10000
+        int $iterations = 10000,
     ): ProbabilityResult {
         $playerHand->validateNotEmpty();
 

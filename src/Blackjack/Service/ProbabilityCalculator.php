@@ -22,6 +22,17 @@ final readonly class ProbabilityCalculator
     }
 
     /**
+     * Factory method to create a ProbabilityCalculator with default implementations.
+     */
+    public static function create(): self
+    {
+        return new self(
+            new ExactProbabilityCalculator(),
+            new MonteCarloProbabilityCalculator(),
+        );
+    }
+
+    /**
      * @param array<Card> $knownCards
      */
     public function calculate(
@@ -39,7 +50,7 @@ final readonly class ProbabilityCalculator
                 $dealerUpCard,
                 $knownCards,
                 $shoe,
-                $rules
+                $rules,
             ),
             ProbabilityCalculationMethod::MONTE_CARLO => $this->monteCarloCalculator->calculate(
                 $playerHand,
@@ -47,7 +58,7 @@ final readonly class ProbabilityCalculator
                 $knownCards,
                 $shoe,
                 $rules,
-                $iterations
+                $iterations,
             ),
         };
     }

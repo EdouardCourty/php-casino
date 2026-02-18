@@ -50,7 +50,6 @@ class EquityResultTest extends TestCase
         $result = new EquityResult(0.5, 0.1, 1000);
         $array = $result->toArray();
 
-        $this->assertIsArray($array);
         $this->assertArrayHasKey('win', $array);
         $this->assertArrayHasKey('tie', $array);
         $this->assertArrayHasKey('loss', $array);
@@ -69,7 +68,6 @@ class EquityResultTest extends TestCase
         $result = new EquityResult(0.5, 0.1, 1000);
         $array = $result->toPercentageArray();
 
-        $this->assertIsArray($array);
         $this->assertArrayHasKey('win_pct', $array);
         $this->assertArrayHasKey('tie_pct', $array);
         $this->assertArrayHasKey('loss_pct', $array);

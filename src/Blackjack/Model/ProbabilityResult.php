@@ -22,19 +22,19 @@ final readonly class ProbabilityResult
 
         if (abs($total - 1.0) > 0.0001) {
             throw new \InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     'Probabilities must sum to 1.0, got %.4f (win: %.4f, loss: %.4f, push: %.4f)',
                     $total,
                     $this->winProbability,
                     $this->lossProbability,
-                    $this->pushProbability
-                )
+                    $this->pushProbability,
+                ),
             );
         }
 
         if ($this->scenariosConsidered < 1) {
             throw new \InvalidArgumentException(
-                "Scenarios considered must be at least 1, got {$this->scenariosConsidered}"
+                "Scenarios considered must be at least 1, got {$this->scenariosConsidered}",
             );
         }
     }

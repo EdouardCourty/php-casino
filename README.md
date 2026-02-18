@@ -738,10 +738,7 @@ use Ecourty\PHPCasino\Common\Enum\CardRank;
 use Ecourty\PHPCasino\Common\Enum\CardSuit;
 
 // Create the calculator (dependency injection)
-$calculator = new ProbabilityCalculator(
-    new ExactProbabilityCalculator(),
-    new MonteCarloProbabilityCalculator()
-);
+$calculator = ProbabilityCalculator::create();
 
 // Player's hand (standing at 19)
 $playerHand = Hand::fromCards(
@@ -903,10 +900,7 @@ $shoe = Shoe::fromGameRules($rules);
 $shoe->shuffle();
 
 $evaluator = new HandEvaluator();
-$probabilityCalc = new ProbabilityCalculator(
-    new ExactProbabilityCalculator(),
-    new MonteCarloProbabilityCalculator()
-);
+$probabilityCalculator = ProbabilityCalculator::create();
 
 // Deal initial cards
 [$playerCard1, $playerCard2, $dealerUpCard, $dealerHoleCard] = $shoe->draw(4);
@@ -932,7 +926,7 @@ if ($evaluator->isBlackjack($playerHand)) {
 
 // Calculate probabilities (player decides whether to hit or stand)
 $knownCards = [$playerCard1, $playerCard2, $dealerUpCard];
-$probabilities = $probabilityCalc->calculate(
+$probabilities = $probabilityCalculator->calculate(
     $playerHand,
     $dealerUpCard,
     $knownCards,
@@ -1098,9 +1092,3 @@ Contributions are welcome! Please ensure:
 ## License
 
 MIT License - see LICENSE file for details
-
----
-
-**Author**: Emmanuel Courty  
-**Package**: `ecourty/php-casino`  
-**PHP Version**: 8.4+
