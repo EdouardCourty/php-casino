@@ -1,5 +1,7 @@
 # PHP Casino
 
+[![PHP CI](https://github.com/EdouardCourty/php-casino/actions/workflows/ci.yml/badge.svg)](https://github.com/EdouardCourty/php-casino/actions/workflows/ci.yml)
+
 A comprehensive PHP library for simulating casino games including Poker, Roulette, and Blackjack. Build game systems, test strategies, and implement casino game logic with ease.
 
 ## Table of Contents
